@@ -21,6 +21,7 @@ chrome-user-data
 .idea
 *.iml
 package-lock.json
+
 .vscode
 *.swp
 *.swo

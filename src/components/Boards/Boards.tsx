@@ -3,7 +3,7 @@ import { getColor, getRandomColor } from "../../utils";
 
 type BoardProps = {
   stage: number;
-  onClickBoard: (isSelected: boolean) => void;
+  onClickBoard: (isAnswer: boolean) => void;
 };
 
 const Boards: React.VFC<BoardProps> = ({ stage, onClickBoard }) => {
@@ -21,47 +21,49 @@ const Boards: React.VFC<BoardProps> = ({ stage, onClickBoard }) => {
       g: getRandomColor(255),
       b: getRandomColor(255),
       a: getRandomColor(0.7) + 0.3,
-      weight: 100 - stage * 3,
+      weight: 100 - stage ** 0.7 * 6,
     });
   }, [stage]);
 
-  const number = useMemo(() => {
+  const numbers = useMemo(() => {
     const col = Math.round((stage + 0.5) / 2) + 1;
-    const itemNumber = Math.pow(col, 2);
-    const randomIndex = Math.floor(Math.random() * itemNumber);
+    const area = Math.pow(col, 2);
+    const answer = Math.floor(Math.random() * area);
 
     return {
       col,
-      randomIndex,
-      itemNumber,
+      area,
+      answer,
     };
   }, [stage]);
 
-  const style: { [key: string]: (isAnswer: boolean) => React.CSSProperties } =
-    useMemo(() => {
-      return {
-        boardStyle: (isAnswer: boolean) => ({
-          width: `${360 / number.col - 4}px`,
-          height: `${360 / number.col - 4}px`,
-          margin: "2px",
-          backgroundColor: isAnswer
-            ? `${getColor(color)}`
-            : `${getColor({ ...color, weight: 0 })}`,
-        }),
-      };
-    }, [number, color]);
+  const style = useMemo(() => {
+    return {
+      boardStyle: (isAnswer?: boolean) => ({
+        margin: "2px",
+        backgroundColor: isAnswer
+          ? `${getColor(color)}`
+          : `${getColor({ ...color, weight: 0 })}`,
+      }),
+
+      boardWrapperStyle: {
+        gridTemplateColumns: `repeat(${numbers.col}, 1fr)`,
+      },
+    };
+  }, [numbers.col, color]);
 
   return (
-    <div className="board-wrapper">
-      {new Array(number.itemNumber).fill(null).map((v, i) => (
-        <div
-          onClick={() => onClickBoard(number.randomIndex === i)}
-          key={v + i}
-          style={style.boardStyle(number.randomIndex === i)}
-        ></div>
+    <ul style={style.boardWrapperStyle} className="board-wrapper">
+      {new Array(numbers.area).fill(null).map((v, i) => (
+        <li
+          className="board"
+          onClick={() => onClickBoard(numbers.answer === i)}
+          key={`${v}--${i}`}
+          style={style.boardStyle(numbers.answer === i)}
+        />
       ))}
-    </div>
+    </ul>
   );
 };
 
-export default React.memo(Boards);
+export default React.memo(Boards, (prev, next) => prev.stage === next.stage);

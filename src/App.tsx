@@ -1,39 +1,58 @@
-import React, { useCallback, useEffect, useReducer, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useReducer } from "react";
 import { Boards, Header } from "./components";
+import Footer from "./components/Footer/Footer";
 import {
-  clickBoard,
-  deleteTime,
+  clickCorrect,
+  clickWrong,
+  decreaseTime,
   initalState,
   reducer,
+  reset,
   timeOver,
 } from "./reducer";
 
 const App = () => {
-  const [info, dispatch] = useReducer(reducer, initalState);
+  const [{ time, point, isPlaying, stage }, dispatch] = useReducer(
+    reducer,
+    initalState
+  );
 
   useEffect(() => {
-    if (info.time <= 0) {
-      // window.alert(`GAME OVER!\n스테이지: ${info.stage}, 점수: ${info.point}`);
-      dispatch(timeOver(true));
-    } else if (!info.isPlaying) {
-      dispatch(timeOver(false));
+    if (time <= 0) {
+      window.alert(`GAME OVER!\n스테이지: ${stage}, 점수: ${point}`);
+      dispatch(timeOver);
+    } else if (!isPlaying) {
+      dispatch(reset);
     }
-  }, [info]);
-
-  const countTimer = useCallback(() => {
-    dispatch(deleteTime());
-  }, []);
+  }, [time]);
 
   const onClickBoard = useCallback((isAnswer: boolean) => {
-    dispatch(clickBoard(isAnswer));
+    isAnswer ? dispatch(clickCorrect) : dispatch(clickWrong);
+  }, []);
+
+  const onDecreaseTime = useCallback(() => {
+    dispatch(decreaseTime);
   }, []);
 
   return (
-    <div>
-      <Header {...info} countTimer={countTimer} />
-      <Boards onClickBoard={onClickBoard} stage={info.stage} />
-    </div>
+    <>
+      <Header
+        onDecreaseTime={onDecreaseTime}
+        time={time}
+        stage={stage}
+        point={point}
+      />
+      <Boards onClickBoard={onClickBoard} stage={stage} />
+      <Footer>
+        <a
+          href="https://github.com/jaewoong2/no-state-management-challenge"
+          target="_blank"
+        >
+          @jaewoong2
+        </a>
+      </Footer>
+    </>
   );
 };
 
-export default React.memo(App);
+export default App;

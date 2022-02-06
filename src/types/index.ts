@@ -6,11 +6,13 @@ export type infoType = {
 }
 
 export type Action = {
-    type: "CLICK_BOARD";
-    payload: boolean
+    type: "CLICK_CORRECT";
+} | {
+    type: "CLICK_WRONG"
 } | {
     type: "TIME_OVER";
-    payload?: boolean;
 } | {
-    type: "DELETE_TIME"
-}
+    type: "DECREASE_TIME"
+} | {
+    type: "RESET"
+} 

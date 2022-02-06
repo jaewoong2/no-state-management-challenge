@@ -1,18 +1,25 @@
-import React, { useEffect } from "react";
-import { infoType } from "src/types";
+import React, { useEffect, useRef, useState } from "react";
 
-type HeaderProps = infoType & { countTimer: () => void };
+type HeaderProps = {
+  stage: number;
+  time: number;
+  point: number;
+  onDecreaseTime: () => void;
+};
 
-const Header: React.VFC<HeaderProps> = ({ stage, time, point, countTimer }) => {
-  // In App Component, interval re-render both Header, Boards Component.
-  // interval in Header Component (Not App Component), for no re-rendering Boards Component
+const Header: React.VFC<HeaderProps> = ({
+  stage,
+  time,
+  point,
+  onDecreaseTime,
+}) => {
   useEffect(() => {
     const timer = setInterval(() => {
-      countTimer();
+      onDecreaseTime();
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [countTimer]);
+  }, [onDecreaseTime]);
 
   return (
     <header>
