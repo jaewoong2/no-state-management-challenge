@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useReducer } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+} from "react";
 import { Boards, Header } from "./components";
 import Footer from "./components/Footer/Footer";
 import {
@@ -18,6 +24,14 @@ const App = () => {
   );
 
   useEffect(() => {
+    const interval = setInterval(() => {
+      dispatch(decreaseTime);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
     if (time <= 0) {
       window.alert(`GAME OVER!\n스테이지: ${stage}, 점수: ${point}`);
       dispatch(timeOver);
@@ -30,18 +44,9 @@ const App = () => {
     isAnswer ? dispatch(clickCorrect) : dispatch(clickWrong);
   }, []);
 
-  const onDecreaseTime = useCallback(() => {
-    dispatch(decreaseTime);
-  }, []);
-
   return (
     <>
-      <Header
-        onDecreaseTime={onDecreaseTime}
-        time={time}
-        stage={stage}
-        point={point}
-      />
+      <Header time={time} stage={stage} point={point} />
       <Boards onClickBoard={onClickBoard} stage={stage} />
       <Footer>
         <a
