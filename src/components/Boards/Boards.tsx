@@ -1,5 +1,6 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { getColor, getRandomColor } from "../../utils";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { getColor, getNumbers, getRgba } from "../../utils";
+import Board from "../Board/Board";
 
 type BoardProps = {
   stage: number;
@@ -7,59 +8,37 @@ type BoardProps = {
 };
 
 const Boards: React.VFC<BoardProps> = ({ stage, onClickBoard }) => {
-  const [color, setColor] = useState({
-    r: 0,
-    g: 0,
-    b: 0,
-    a: 1,
-    weight: 0,
-  });
+  const [color, setColor] = useState({ ...getRgba(), weight: 0 });
 
   useEffect(() => {
-    setColor({
-      r: getRandomColor(255),
-      g: getRandomColor(255),
-      b: getRandomColor(255),
-      a: getRandomColor(0.7) + 0.3,
-      weight: 100 - stage ** 0.7 * 6,
-    });
+    setColor({ ...getRgba(), weight: 100 - stage ** 0.7 * 6 });
   }, [stage]);
 
-  const numbers = useMemo(() => {
-    const col = Math.round((stage + 0.5) / 2) + 1;
-    const area = Math.pow(col, 2);
-    const answer = Math.floor(Math.random() * area);
+  const numbers = useMemo(() => getNumbers(stage), [stage]);
 
-    return {
-      col,
-      area,
-      answer,
-    };
-  }, [stage]);
+  const boardStyle = useCallback(
+    (isAnswer: boolean): React.CSSProperties => ({
+      backgroundColor: isAnswer
+        ? `${getColor(color)}`
+        : `${getColor({ ...color, weight: 0 })}`,
+    }),
+    [color]
+  );
 
-  const style = useMemo(() => {
-    return {
-      boardStyle: (isAnswer?: boolean) => ({
-        margin: "2px",
-        backgroundColor: isAnswer
-          ? `${getColor(color)}`
-          : `${getColor({ ...color, weight: 0 })}`,
-      }),
-
-      boardWrapperStyle: {
-        gridTemplateColumns: `repeat(${numbers.col}, 1fr)`,
-      },
-    };
-  }, [numbers.col, color]);
+  const boardWrapperStyle = useMemo(
+    (): React.CSSProperties => ({
+      gridTemplateColumns: `repeat(${numbers.col}, 1fr)`,
+    }),
+    [numbers.col]
+  );
 
   return (
-    <ul style={style.boardWrapperStyle} className="board-wrapper">
+    <ul style={boardWrapperStyle} className="board-wrapper">
       {new Array(numbers.area).fill(null).map((v, i) => (
-        <li
-          className="board"
-          onClick={() => onClickBoard(numbers.answer === i)}
-          key={`${v}--${i}`}
-          style={style.boardStyle(numbers.answer === i)}
+        <Board
+          key={`Board-${i}-${v}`}
+          onClick={() => onClickBoard(i === numbers.answer)}
+          style={boardStyle(i === numbers.answer)}
         />
       ))}
     </ul>

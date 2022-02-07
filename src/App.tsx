@@ -18,14 +18,21 @@ import {
 } from "./reducer";
 
 const App = () => {
+  const ref = useRef<() => void>(() => {});
   const [{ time, point, isPlaying, stage }, dispatch] = useReducer(
     reducer,
     initalState
   );
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    ref.current = () => {
       dispatch(decreaseTime);
+    };
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      ref.current();
     }, 1000);
 
     return () => clearInterval(interval);
