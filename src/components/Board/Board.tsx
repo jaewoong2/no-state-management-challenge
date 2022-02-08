@@ -9,4 +9,4 @@ const Board: React.VFC<BoardProps> = ({ onClick, style }) => {
   return <li className="board" onClick={onClick} style={style} />;
 };
 
-export default Board;
+export default React.memo(Board);

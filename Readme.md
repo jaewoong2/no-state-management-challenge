@@ -43,6 +43,26 @@ https://no-state-management-challenge.vercel.app/simple
 
   - 단점: `reduecr` 파일을 따로 만들어야 하고, 조금 더 편하게 관리 하기 위해서 `reducer` 의 코드가 무의미하게 길어지는 경향이 있다.
 
+### 리팩토링 하며 알게된 부분
+
+- React.Fragment `<></>` 사용 VS 기존 Html Element 사용 `<main></main>`
+
+  - React.Fragment 를 사용 하여 각각 컴포넌트를 감쌌을 때,
+    ![re-rendering-with-react fragment](https://user-images.githubusercontent.com/63512217/152949731-a1e2e00d-3e7a-42de-8ee8-7cda20a95792.gif)
+
+    남은시간이 매초 변경 됨에 따라서 각각 컴포넌트가 모두 리랜더링 된다.
+
+  - `<main></main>` 컴포넌트로 감싸 줬을 때,
+    ![Re-rendering-with-main](https://user-images.githubusercontent.com/63512217/152949380-e3cfb21c-8ef9-4333-aa90-b817de7b9510.gif)
+
+    남은시간이 매초 변경 됨에 따라서 각각 컴포넌트가 리랜더링 되는 대신에,
+    `<main></main>` 컴포넌트만 리랜더링 된다.
+
+    - `<Header />` 컴포넌트는 시간에 따라 바뀌어야 하기 때문에 정상적인 리렌더링
+
+  <br />
+  결론: main 컴포넌트 하나만 리렌더링이 되는게 좋은 것인지, 모든 하위 컴포넌트가 리렌더링 되는 것이 좋은 것인지 모르겠으나, 각 컴포넌트가 비용이 많이 든다면, React Fragment를 사용하지 않는 것이 좋은 것 같다.
+
 ## 주요로직
 
 ### 색상 관련 코드
@@ -67,22 +87,25 @@ export const getColor = ({
 
 export const getRandomColor = (num: number) =>
   num > 1 ? Math.floor(Math.random() * num) : Math.random() * num;
+
+export const getRgba = () => ({
+  r: getRandomColor(255),
+  g: getRandomColor(255),
+  b: getRandomColor(255),
+  a: getRandomColor(0.7) + 0.3,
+});
 ```
 
 - `getColor` 는 `rgba()` 값으로 변경시켜주는 코드
 - `getRandomColor` 는 `0 ~ 255` 의 무작위 값을 반환 시켜주는 코드
+- `getRgba` 는 `rgba` 값을 객채화 시켜주는 코드
+  - `<Boards />` 의 `color State` 에 사용 위함
 
-```ts
-// @components/Board/Board.tsx
+```tsx
+// @components/Boards/Boards.tsx
 
 useEffect(() => {
-  setColor({
-    r: getRandomColor(255),
-    g: getRandomColor(255),
-    b: getRandomColor(255),
-    a: getRandomColor(0.7) + 0.3,
-    weight: 100 - stage ** 0.7 * 6,
-  });
+  setColor({ ...getRgba(), weight: 100 - stage ** 0.7 * 6 });
 }, [stage]);
 ```
 
@@ -90,9 +113,8 @@ useEffect(() => {
 - `stage가` 높아질 수록,`weight가` 줄어들면서 스테이지가 높을 수록 더욱더 찾기 어렵게 된다.
 
 ```tsx
-// @components/Board/Board.tsx
-
-const numbers = useMemo(() => {
+// @utils/index.ts
+export const getNumbers = (stage: number) => {
   const col = Math.round((stage + 0.5) / 2) + 1;
   const area = Math.pow(col, 2);
   const answer = Math.floor(Math.random() * area);
@@ -102,28 +124,32 @@ const numbers = useMemo(() => {
     area,
     answer,
   };
-}, [stage]);
+};
+
+// @components/Boards/Boards.tsx
+const { col, answer, area } = useMemo(() => getNumbers(stage), [stage]);
 ```
 
-- `stage` 에 따른 `col: 가로 사각형 갯수`, `area: 전체 사각형 갯수`, `answer: 정답 index` 를 반환 해준다.
+- `stage` 에 따른 `col: 가로 사각형 갯수`, `area: 전체 사각형 갯수`, `answer: 정답 index` 를 얻는다.
 
 ```tsx
-// @components/Board/Board.tsx
+// @components/Boards/Boards.tsx
 
-const style = useMemo(() => {
-  return {
-    boardStyle: (isAnswer?: boolean) => ({
-      margin: "2px",
-      backgroundColor: isAnswer
-        ? `${getColor(color)}`
-        : `${getColor({ ...color, weight: 0 })}`,
-    }),
+const boardStyle = useCallback(
+  (isAnswer: boolean): React.CSSProperties => ({
+    backgroundColor: isAnswer
+      ? `${getColor(color)}`
+      : `${getColor({ ...color, weight: 0 })}`,
+  }),
+  [color]
+);
 
-    boardWrapperStyle: {
-      gridTemplateColumns: `repeat(${numbers.col}, 1fr)`,
-    },
-  };
-}, [numbers.col, color]);
+const boardWrapperStyle = useMemo(
+  (): React.CSSProperties => ({
+    gridTemplateColumns: `repeat(${col}, 1fr)`,
+  }),
+  [col]
+);
 ```
 
 - `stage` 에 따른 `style` 를 반환 해준다.

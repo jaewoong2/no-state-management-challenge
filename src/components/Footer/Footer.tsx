@@ -4,4 +4,4 @@ const Footer: React.FC = ({ children }) => {
   return <footer>{children}</footer>;
 };
 
-export default Footer;
+export default React.memo<React.FC>(Footer, () => true);

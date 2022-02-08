@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useReducer,
-  useRef,
-} from "react";
+import React, { useCallback, useEffect, useReducer, useRef } from "react";
 import { Boards, Header } from "./components";
 import Footer from "./components/Footer/Footer";
 import {
@@ -28,9 +22,7 @@ const App = () => {
     ref.current = () => {
       dispatch(decreaseTime);
     };
-  }, []);
 
-  useEffect(() => {
     const interval = setInterval(() => {
       ref.current();
     }, 1000);
@@ -53,12 +45,15 @@ const App = () => {
 
   return (
     <>
-      <Header time={time} stage={stage} point={point} />
+      <Header>
+        스테이지: {stage}, 남은 시간: {time}, 점수: {point}
+      </Header>
       <Boards onClickBoard={onClickBoard} stage={stage} />
       <Footer>
         <a
           href="https://github.com/jaewoong2/no-state-management-challenge"
           target="_blank"
+          rel="noreferrer"
         >
           @jaewoong2
         </a>

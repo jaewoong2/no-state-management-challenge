@@ -1,17 +1,9 @@
 import React from "react";
 
-type HeaderProps = {
-  stage: number;
-  time: number;
-  point: number;
+const Header: React.FC = ({ children }) => {
+  return <header>{children}</header>;
 };
 
-const Header: React.VFC<HeaderProps> = ({ stage, time, point }) => {
-  return (
-    <header>
-      스테이지: {stage}, 남은 시간: {time}, 점수: {point}
-    </header>
-  );
-};
-
-export default React.memo(Header);
+export default React.memo<React.FC>(Header, (prev, next) => {
+  return prev.children === next.children;
+});

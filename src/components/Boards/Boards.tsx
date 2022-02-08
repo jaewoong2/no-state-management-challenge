@@ -9,12 +9,11 @@ type BoardProps = {
 
 const Boards: React.VFC<BoardProps> = ({ stage, onClickBoard }) => {
   const [color, setColor] = useState({ ...getRgba(), weight: 0 });
+  const { col, answer, area } = useMemo(() => getNumbers(stage), [stage]);
 
   useEffect(() => {
     setColor({ ...getRgba(), weight: 100 - stage ** 0.7 * 6 });
   }, [stage]);
-
-  const numbers = useMemo(() => getNumbers(stage), [stage]);
 
   const boardStyle = useCallback(
     (isAnswer: boolean): React.CSSProperties => ({
@@ -27,22 +26,24 @@ const Boards: React.VFC<BoardProps> = ({ stage, onClickBoard }) => {
 
   const boardWrapperStyle = useMemo(
     (): React.CSSProperties => ({
-      gridTemplateColumns: `repeat(${numbers.col}, 1fr)`,
+      gridTemplateColumns: `repeat(${col}, 1fr)`,
     }),
-    [numbers.col]
+    [col]
   );
 
   return (
     <ul style={boardWrapperStyle} className="board-wrapper">
-      {new Array(numbers.area).fill(null).map((v, i) => (
+      {new Array(area).fill(null).map((v, i) => (
         <Board
           key={`Board-${i}-${v}`}
-          onClick={() => onClickBoard(i === numbers.answer)}
-          style={boardStyle(i === numbers.answer)}
+          onClick={() => onClickBoard(i === answer)}
+          style={boardStyle(i === answer)}
         />
       ))}
     </ul>
   );
 };
 
-export default React.memo(Boards, (prev, next) => prev.stage === next.stage);
+export default React.memo(Boards, (prev, next) => {
+  return prev.stage === next.stage;
+});
