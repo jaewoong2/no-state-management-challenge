@@ -22,12 +22,11 @@ export function reducer(state: infoType, action: Action): infoType {
                 ...state, time: state.time - 3
             }
 
-        case TIME_OVER: {
-            window.alert(`GAME OVER!\n스테이지: ${state.stage}, 점수: ${state.point}`);
+        case TIME_OVER:
             return {
                 ...initalState,
             }
-        }
+
 
         case DECREASE_TIME:
             return {

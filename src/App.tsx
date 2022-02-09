@@ -28,6 +28,8 @@ const App = () => {
 
   useEffect(() => {
     if (time <= 0) {
+      window.alert(`GAME OVER!\n스테이지: ${stage}, 점수: ${point}`);
+
       dispatch(timeOver);
     }
   }, [time]);
