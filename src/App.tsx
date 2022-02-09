@@ -1,22 +1,18 @@
 import React, { useCallback, useEffect, useReducer, useRef } from "react";
-import { Boards, Header } from "./components";
-import Footer from "./components/Footer/Footer";
+import { Boards, Header, Footer } from "./components";
 import {
   clickCorrect,
   clickWrong,
   decreaseTime,
   initalState,
   reducer,
-  reset,
   timeOver,
 } from "./reducer";
 
 const App = () => {
   const ref = useRef<() => void>(() => {});
-  const [{ time, point, isPlaying, stage }, dispatch] = useReducer(
-    reducer,
-    initalState
-  );
+  const [state, dispatch] = useReducer(reducer, initalState);
+  const { time, point, stage } = state;
 
   useEffect(() => {
     ref.current = () => {
@@ -32,10 +28,7 @@ const App = () => {
 
   useEffect(() => {
     if (time <= 0) {
-      window.alert(`GAME OVER!\n스테이지: ${stage}, 점수: ${point}`);
       dispatch(timeOver);
-    } else if (!isPlaying) {
-      dispatch(reset);
     }
   }, [time]);
 

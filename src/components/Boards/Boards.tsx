@@ -1,11 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { getColor, getNumbers, getRgba } from "../../utils";
 import Board from "../Board/Board";
-
-type BoardProps = {
-  stage: number;
-  onClickBoard: (isAnswer: boolean) => void;
-};
+import BoardProps from "./Boards.type";
 
 const Boards: React.VFC<BoardProps> = ({ stage, onClickBoard }) => {
   const [color, setColor] = useState({ ...getRgba(), weight: 0 });
@@ -44,6 +40,4 @@ const Boards: React.VFC<BoardProps> = ({ stage, onClickBoard }) => {
   );
 };
 
-export default React.memo(Boards, (prev, next) => {
-  return prev.stage === next.stage;
-});
+export default React.memo(Boards, (prev, next) => prev.stage === next.stage);

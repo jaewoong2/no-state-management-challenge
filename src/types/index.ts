@@ -2,7 +2,6 @@ export type infoType = {
     stage: number;
     time: number;
     point: number;
-    isPlaying: boolean;
 }
 
 export type Action = {
@@ -13,6 +12,4 @@ export type Action = {
     type: "TIME_OVER";
 } | {
     type: "DECREASE_TIME"
-} | {
-    type: "RESET"
 } 

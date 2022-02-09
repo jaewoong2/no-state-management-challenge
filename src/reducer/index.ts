@@ -2,11 +2,10 @@ import { infoType, Action } from "src/types";
 
 const CLICK_CORRECT = "CLICK_CORRECT";
 const CLICK_WRONG = "CLICK_WRONG";
-const RESET = "RESET"
 const TIME_OVER = "TIME_OVER";
 const DECREASE_TIME = "DECREASE_TIME";
 
-export const initalState: infoType = { stage: 1, time: 15, point: 0, isPlaying: true };
+export const initalState: infoType = { stage: 1, time: 15, point: 0 };
 
 export function reducer(state: infoType, action: Action): infoType {
     switch (action.type) {
@@ -23,13 +22,12 @@ export function reducer(state: infoType, action: Action): infoType {
                 ...state, time: state.time - 3
             }
 
-        case TIME_OVER:
+        case TIME_OVER: {
+            window.alert(`GAME OVER!\n스테이지: ${state.stage}, 점수: ${state.point}`);
             return {
                 ...initalState,
-                isPlaying: false,
             }
-        case RESET:
-            return initalState
+        }
 
         case DECREASE_TIME:
             return {
@@ -48,11 +46,6 @@ export const clickCorrect: Action = {
 
 export const clickWrong: Action = {
     type: CLICK_WRONG,
-}
-
-
-export const reset: Action = {
-    type: RESET,
 }
 
 export const timeOver: Action = {
