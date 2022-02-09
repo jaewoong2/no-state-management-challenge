@@ -26,10 +26,10 @@ https://no-state-management-challenge.vercel.app/simple
 
 - `React.memo(Component, PropsAreEqual)` 사용하기 ~~(실패)~~
 
-  - `Header Component` 에서 매초 남은 시간을 카운트 다운 해줄 떄마다 `Board Component` 가 무의미하게 리렌더링 되었다.
-  - `PropsAreaEqaul`을 사용해서 `Board Component` 의 무의미한 리렌더링을 방지 하고자 하였다.
+  - `Header Component` 에서 매초 남은 시간을 카운트 다운 해줄 떄마다 `Boards Component` 가 무의미하게 리렌더링 되었다.
+  - `PropsAreaEqaul`을 사용해서 `Boards Component` 의 무의미한 리렌더링을 방지 하고자 하였다.
 
-    - `React.memo(Board, (prevProps, nextProps) => prevProps.stage === nextProps.stage)` `Board Component` 가 `stage가 바뀔 떄만 리렌더링 되게 하였다.`
+    - `React.memo(Board, (prevProps, nextProps) => prevProps.stage === nextProps.stage)` `Boards Component` 가 `stage가 바뀔 떄만 리렌더링 되게 하였다.`
 
   - 하지만, 리렌더링이 계속해서 되었다. 이유를 찾아보니 상위 컴포넌트의 리렌더링을 통한 자식 컴포넌트의 리렌더링은 막기 어렵다는 것이다. `(막는 방법이 있을 것 같긴 한데... 못찾음 )`
 
@@ -170,7 +170,7 @@ weight: 100 - stage ** 0.7 * 6,
 
 ## 프로젝트를 진행할 때 어려웠던 점/고민했던 부분과 해결방법
 
-- 프로젝트를 진핼 할 때, `Board Component` 의 불필요한 리렌더링을 어떻게 막을지가 가장 고민하였던 부분이다.
+- 프로젝트를 진핼 할 때, `Boards Component` 의 불필요한 리렌더링을 어떻게 막을지가 가장 고민하였던 부분이다.
 
 - 앞서 작성 하였듯, 해결하지는 못했지만 많은 방법등을 사용해보았던 점에서 많은 경험을 하게 되었고 `관심 컴포넌트 분리화`, `전역 상태 관리 라이브러리` 등이 왜 필요하게 되었는지 깨닫게 되었다.
 
