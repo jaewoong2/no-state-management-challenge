@@ -132,6 +132,8 @@ const { col, answer, area } = useMemo(() => getNumbers(stage), [stage]);
 
 - `stage` 에 따른 `col: 가로 사각형 갯수`, `area: 전체 사각형 갯수`, `answer: 정답 index` 를 얻는다.
 
+### 수정전
+
 ```tsx
 // @components/Boards/Boards.tsx
 
@@ -153,6 +155,41 @@ const boardWrapperStyle = useMemo(
 ```
 
 - `stage` 에 따른 `style` 를 반환 해준다.
+
+### 수정후
+
+```tsx
+// @component/Boards/Boards.tsx
+<Board
+  key={`Board-${i}-${v}`}
+  onClick={() => onClickBoard(i === answer)}
+  backgroundColor={
+    i === answer ? getColor(color) : getColor({ ...color, weight: 0 })
+  }
+/>
+```
+
+```tsx
+// @components/Board/Board.style.tsx
+import styled from "@emotion/styled";
+import { BoardProps } from "./Board.type";
+
+export const Li = styled.li<BoardProps>`
+  background-color: ${({ backgroundColor }) => backgroundColor};
+  cursor: pointer;
+`;
+```
+
+```tsx
+// @components/Boards/Boards.style.tsx
+import styled from "@emotion/styled";
+
+export const Ul = styled.ul<{ col: number }>`
+  grid-template-columns: ${({ col }) => `repeat(${col}, 1fr)`};
+`;
+```
+
+- tsx 컴포넌트 내에 간결한 코드를 위해서 수정 하였다.
 
 ## 코드 내에서 고려한 특정 유저 행동과 그에 대한 대처
 
