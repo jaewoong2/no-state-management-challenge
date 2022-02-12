@@ -1,6 +1,7 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { getColor, getNumbers, getRgba } from "../../utils";
 import Board from "../Board/Board";
+import { Ul } from "./Boards.style";
 import BoardProps from "./Boards.type";
 
 const Boards: React.VFC<BoardProps> = ({ stage, onClickBoard }) => {
@@ -11,32 +12,18 @@ const Boards: React.VFC<BoardProps> = ({ stage, onClickBoard }) => {
     setColor({ ...getRgba(), weight: 100 - stage ** 0.7 * 6 });
   }, [stage]);
 
-  const boardStyle = useCallback(
-    (isAnswer: boolean): React.CSSProperties => ({
-      backgroundColor: isAnswer
-        ? `${getColor(color)}`
-        : `${getColor({ ...color, weight: 0 })}`,
-    }),
-    [color]
-  );
-
-  const boardWrapperStyle = useMemo(
-    (): React.CSSProperties => ({
-      gridTemplateColumns: `repeat(${col}, 1fr)`,
-    }),
-    [col]
-  );
-
   return (
-    <ul style={boardWrapperStyle} className="board-wrapper">
+    <Ul col={col} className="board-wrapper">
       {new Array(area).fill(null).map((v, i) => (
         <Board
           key={`Board-${i}-${v}`}
           onClick={() => onClickBoard(i === answer)}
-          style={boardStyle(i === answer)}
+          backgroundColor={
+            i === answer ? getColor(color) : getColor({ ...color, weight: 0 })
+          }
         />
       ))}
-    </ul>
+    </Ul>
   );
 };
 

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useReducer, useRef } from "react";
+import React, { useCallback, useEffect, useReducer } from "react";
 import { Boards, Header, Footer } from "./components";
 import {
   clickCorrect,
@@ -10,22 +10,18 @@ import {
 } from "./reducer";
 
 const App = () => {
-  const ref = useRef<() => void>(() => {});
-  const [state, dispatch] = useReducer(reducer, initalState);
-  const { time, point, stage } = state;
+  const [{ time, point, stage }, dispatch] = useReducer(reducer, initalState);
 
+  // interval - for decrease "time" by 1 every second
   useEffect(() => {
-    ref.current = () => {
-      dispatch(decreaseTime);
-    };
-
     const interval = setInterval(() => {
-      ref.current();
+      dispatch(decreaseTime);
     }, 1000);
 
     return () => clearInterval(interval);
   }, []);
 
+  // alert timeover by checking every "time"
   useEffect(() => {
     if (time <= 0) {
       window.alert(`GAME OVER!\n스테이지: ${stage}, 점수: ${point}`);
@@ -34,6 +30,7 @@ const App = () => {
     }
   }, [time]);
 
+  // click Wrong => decrease time by 3, click Correct => next stage, point
   const onClickBoard = useCallback((isAnswer: boolean) => {
     isAnswer ? dispatch(clickCorrect) : dispatch(clickWrong);
   }, []);

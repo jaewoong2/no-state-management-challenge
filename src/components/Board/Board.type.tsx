@@ -1,6 +1,4 @@
-type BoardProps = {
+export type BoardProps = {
   onClick: () => void;
-  style: React.CSSProperties;
+  backgroundColor: string;
 };
-
-export default BoardProps;

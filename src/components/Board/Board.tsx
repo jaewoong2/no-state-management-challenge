@@ -1,8 +1,11 @@
 import React from "react";
-import BoardProps from "./Board.type";
+import { Li } from "./Board.style";
+import { BoardProps } from "./Board.type";
 
-const Board: React.VFC<BoardProps> = ({ onClick, style }) => {
-  return <li className="board" onClick={onClick} style={style} />;
+const Board: React.VFC<BoardProps> = ({ onClick, backgroundColor }) => {
+  return (
+    <Li backgroundColor={backgroundColor} className="board" onClick={onClick} />
+  );
 };
 
 export default React.memo(Board);
